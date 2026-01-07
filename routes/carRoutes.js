@@ -5,7 +5,8 @@ const {
     fetchAllCars,
     addToWishlist,
     getCarById,
-    getCars
+    getCars,
+    searchCar
 } = require('../controllers/carController');
 
 const router = express.Router();
@@ -16,5 +17,6 @@ router.get('/cars', fetchAllCars);
 router.patch('/car/:id', addToWishlist);
 router.get('/car/:id', getCarById);
 router.get('/cars/pagination', fetchCarsWithPagination);
+router.get('/searchCar', searchCar);
 
 module.exports = router;

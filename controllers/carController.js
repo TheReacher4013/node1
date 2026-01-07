@@ -1,3 +1,4 @@
+const { search } = require("../app");
 const Car = require("../models/car");
 
 // filter api
@@ -139,3 +140,31 @@ exports.getCarById = async (req, res) => {
         });
     }
 };
+
+exports.searchCar = async (req, res) => {
+    try {
+        const { searchTerm } = req.query;
+        //number = false , char = true
+        const isNumber = !isNaN(searchTerm); //number = true , char = false
+
+        var searchCriteria = [
+            { name: { $regex: searchTerm, $options: "i" } },
+            { brand: { $regex: searchTerm, $options: "i" } },
+            { fueltype: { $regex: searchTerm, $options: "i" } }
+
+        ]
+        if (isNumber) {
+            searchCriteria.push({ seatingcapacity: Number(searchTerm) });
+        }
+
+        const cars = await Car.find({ $or: searchCriteria });
+        return res.status(200).json(cars);
+
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            message: "car not found"
+        })
+
+    }
+}
