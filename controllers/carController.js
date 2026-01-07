@@ -1,6 +1,6 @@
 const Car = require("../models/car");
 
-//filter api
+// filter api
 exports.getCars = async (req, res) => {
     try {
         let filter = {};
@@ -28,44 +28,41 @@ exports.getCars = async (req, res) => {
         res.status(200).json(cars);
 
     } catch (error) {
-        res.status(400).json({
-            message: "Search Error"
-        });
+        res.status(400).json({ message: "Search Error" });
     }
 };
 
-//insert car api
+// insert car api (ARRAY)
 exports.createCars = async (req, res) => {
     try {
-        const { cars } = req.body;
-        await car.insertMany(cars);
+        const cars = req.body;
+        await Car.insertMany(cars);
+
         return res.status(200).json({
-            message: "cars added"
-        })
+            message: "Cars added successfully"
+        });
 
     } catch (error) {
         console.log(error);
         return res.status(400).json({
-            message: " cars not added"
-        })
-
+            message: "Cars not added"
+        });
     }
-}
+};
 
-//fetching with limit api
-
+// pagination api
 exports.fetchCarsWithPagination = async (req, res) => {
     try {
-        const page = Number(req.query.page) || 1;   // page number
-        const limit = Number(req.query.limit) || 10; // cars per page
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
 
         const skip = (page - 1) * limit;
 
-        const cars = await car.find()
+        const cars = await Car.find()
             .skip(skip)
             .limit(limit);
 
-        const totalCars = await car.countDocuments();
+        const totalCars = await Car.countDocuments();
 
         return res.status(200).json({
             success: true,
@@ -82,59 +79,63 @@ exports.fetchCarsWithPagination = async (req, res) => {
             message: "Error fetching paginated cars"
         });
     }
-}
+};
 
-//fetch all api
+// fetch all cars
 exports.fetchAllCars = async (req, res) => {
     try {
-        const cars = await car.find();
-        return res.status(200).json(cars)
+        const cars = await Car.find();
+        return res.status(200).json(cars);
+
     } catch (error) {
         console.log(error);
         return res.status(400).json({
-            message: "not fetching cars"
-        })
-
+            message: "Not fetching cars"
+        });
     }
-}
+};
 
-//add to wishlist api
+// add to wishlist
 exports.addToWishlist = async (req, res) => {
     try {
         const { id } = req.params;
-        await car.updateOne({ _id: id }, { $set: { wishlist: true } });
+        await Car.updateOne(
+            { _id: id },
+            { $set: { wishlist: true } }
+        );
+
         return res.status(200).json({
             message: "Successfully added to wishlist"
-        })
+        });
 
     } catch (error) {
         console.log(error);
         return res.status(400).json({
-            message: "car is not added to wishlist"
-        })
-
+            message: "Car not added to wishlist"
+        });
     }
-}
+};
 
-//fetch all add wishlist api
+// get car by id
 exports.getCarById = async (req, res) => {
     try {
-        const { id } = req.params
-        const myCar = await car.findById(id);
-        console.log(myCar);
+        const { id } = req.params;
+        const myCar = await Car.findById(id);
+
         if (!myCar) {
             return res.status(404).json({
-                message: "car not found"
-            })
+                message: "Car not found"
+            });
         }
+
         res.status(200).json({
             success: true,
             data: myCar
-        })
+        });
 
     } catch (error) {
         return res.status(400).json({
-            message: "car not found"
-        })
+            message: "Car not found"
+        });
     }
-}
+};
